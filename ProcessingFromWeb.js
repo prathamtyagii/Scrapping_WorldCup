@@ -16,31 +16,30 @@ dldpromise.then(function(response1){
 
     let dom = new jsdom.JSDOM(html);
     let document = dom.window.document;
-
+    
     let matches=[];
-    let matchScoreDivs=document.querySelectorAll("div.match-score-block");
-    for(let i=0;i<matchScoreDivs.length;i++){
+    let matchScoreDivs=document.querySelectorAll("div.ds-p-4");
+    //console.log(matchScoreDivs.length);
+    for(let i=0;i<48;i++){
         let match={}; 
-        let desc = document.querySelectorAll("div.match-info>div.description");
+        let desc = document.querySelectorAll("div.ds-text-tight-xs.ds-truncate.ds-text-typo-mid3");
         match.description=desc[i].textContent;
-        let teams=matchScoreDivs[i].querySelectorAll("p.name");
+        let teams=matchScoreDivs[i].querySelectorAll("p.ds-text-tight-m.ds-font-bold.ds-capitalize.ds-truncate");
         match.t1=teams[0].textContent;
         match.t2=teams[1].textContent;
-        let scores=matchScoreDivs[i].querySelectorAll("div.score-detail>span.score");
+        match.score1='';
+        match.score2='';
+        let scores=matchScoreDivs[i].querySelectorAll("div.ds-text-compact-s.ds-text-typo.ds-text-right.ds-whitespace-nowrap>strong");
         if(scores.length==2){
             match.score1=scores[0].textContent;
             match.score2=scores[1].textContent;
         }
         else if(scores.length==1){
             match.score1=scores[0].textContent;
-            match.score2='';
         }
-        else{
-            match.score1='';
-            match.score2='';
-        }
-        let res=matchScoreDivs[i].querySelectorAll("div.status-text > span");
+        let res=matchScoreDivs[i].querySelectorAll("p.ds-text-tight-s.ds-font-regular.ds-line-clamp-2.ds-text-typo > span");
         match.result=res[0].textContent;
+        //console.log(match);
         matches.push(match);
     }
 
@@ -137,15 +136,18 @@ dldpromise.then(function(response1){
         ptr[index]++;
     }
 
+    
     wb.write(args.destexcel);
 
     let folders=[];
 
     for(let i=0; i<names.length; i++){
+        
         folders[i]=path.join(args.destfolder,names[i]);
         fs.mkdirSync(folders[i]);
     }
 
+    
     let ptr1=[1,1,1,1,1,1,1,1,1,1];
 
     for(let i=0;i<matches.length;i++){
@@ -219,6 +221,7 @@ dldpromise.then(function(response1){
         if(ptr[index]>9){
             matchname=ptr1[index]+" "+matches[i].t2+" vs "+matches[i].t1;
         }
+        
         let matchFileName1=path.join(folders[index],matchname+".pdf");
         createScoreCard(matches,i,matchFileName1);
         ptr1[index]++;
