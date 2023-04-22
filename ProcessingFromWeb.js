@@ -16,6 +16,7 @@ dldpromise.then(function(response1){
 
     let dom = new jsdom.JSDOM(html);
     let document = dom.window.document;
+    fs.mkdirSync("teams");
     
     let matches=[];
     let matchScoreDivs=document.querySelectorAll("div.ds-p-4");
